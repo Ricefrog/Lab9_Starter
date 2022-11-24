@@ -47,6 +47,13 @@
       width: 122px;
     }
   </style>
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "2577692a7a58480d8b4629f6c6177e95"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
 </head>
 
 <body>
@@ -86,8 +93,23 @@
       <button>Trigger a Global Error</button>
     </section>
   </main>
-
+                        
   <script>
+    TrackJS.track('Testing TrackJS!');
+                        
+    class MathError extends Error {
+      constructor(firstNum, secondNum, operator) {
+        super(`Could not perform operation: ${firstNum} ${operator} ${secondNum}`); 
+        this.name = "MathError";
+      }
+    }
+
+    window.onerror = (event) => {
+      console.log("window onerror");
+      console.log(event);
+    };
+    console.log("window.onerror has been assigned.");
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,7 +117,31 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      let result;
+      try {
+        switch(operator) {
+          case "+":
+            result = Number(firstNum) + Number(secondNum);
+            break;
+          case "-":
+            result = Number(firstNum) - Number(secondNum);
+            break;
+          case "*":
+            result = Number(firstNum) * Number(secondNum);
+            break;
+          case "/":
+            if (Number(secondNum) === 0) { result = NaN; break; }
+            result = Number(firstNum) / Number(secondNum);
+            break;
+        }
+        console.log(result);
+        if (result != result) { throw new MathError(firstNum, secondNum, operator); }
+      } catch (err) {
+        console.error(err);
+        result = "An error has occurred.";
+      } finally {
+        output.innerHTML = result;
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
