@@ -4,4 +4,5 @@ Koa Calloway
 
 URL: [https://ricefrog.github.io/Lab9_Starter/](https://ricefrog.github.io/Lab9_Starter/)
 
-![trackJs_screenshot](trackJS_screenshot.png)
+## Screenshot
+![screenshot](./trackJS_screenshot.png)
